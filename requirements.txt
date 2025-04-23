@@ -1,0 +1,13 @@
+# requirements.txt
+# --- Add YOUR required libraries below ---
+requests
+pandas
+numpy
+beautifulsoup4
+crawl4ai
+playwright 
+chromium
+
+# numpy
+# openpyxl
+# etc...
