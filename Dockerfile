@@ -9,10 +9,10 @@ USER root
 # Update package lists and install Python, pip
 RUN apk update && apk add --no-cache \
     python3 \
-    py3-pip \           # <--- Installs pip for python3
-    py3-venv \          # <--- Installs venv for python3
-    build-base \        # <--- Alpine equivalent of build-essential (provides gcc, make etc)
-    python3-dev         # <--- Provides Python header files for compiling
+    py3-pip \
+    py3-venv \
+    build-base \
+    python3-dev
 
 # --- Create and activate virtual environment ---
 # Create a directory for the venv owned by the node user
