@@ -20,7 +20,6 @@ RUN apk update && apk add --no-cache \
     libstdc++ \
     cairo \
     xvfb \
-    noto-fonts-emoji \
     chromium # <--- Add browser if you want system version, OR let playwright install below
 
 # --- Check Versions ---
