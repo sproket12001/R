@@ -9,14 +9,13 @@ RUN echo "http://dl-cdn.alpinelinux.org/alpine/v3.16/main" > /etc/apk/repositori
 RUN apk update && apk add --no-cache \
     python3 \
     py3-pip \
-    build-base \
-    python3-dev \
     ca-certificates
 
 RUN cp /etc/apk/repositories.orig /etc/apk/repositories && \
     rm /etc/apk/repositories.orig
 
 RUN apk update && apk add --no-cache \
+    build-base \
     udev \
     ttf-freefont \
     freetype \
