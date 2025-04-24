@@ -1,7 +1,7 @@
 # Dockerfile
 
 # Start from the official n8n base image (use a specific version for stability)
-FROM n8nio/n8n:latest # Consider pinning a version like n8nio/n8n:1.16.0
+FROM n8nio/n8n:latest
 
 # Switch to root user to install packages
 USER root
