@@ -11,24 +11,24 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 \
     python3-pip \
     python3-venv \
-    build-essential \   # Add backslash
-    libnss3 \           # Add backslash
-    libnspr4 \          # Add backslash
-    libdbus-1-3 \       # Add backslash
-    libatk1.0-0 \       # Add backslash
-    libatk-bridge2.0-0 \ # Add backslash
-    libcups2 \          # Add backslash
-    libdrm2 \           # Add backslash
-    libexpat1 \         # Add backslash
-    libxcb1 \           # Add backslash
-    libxkbcommon0 \     # Add backslash
-    libxrandr2 \        # Add backslash
-    libgbm1 \           # Add backslash
-    libasound2 \        # Add backslash
-    libxshmfence1 \     # Add backslash
-    libgles2 \          # Add backslash
-    fonts-liberation \       # Add backslash
-    fonts-noto-color-emoji \ # Add backslash
+    build-essential \
+    libnss3 \           
+    libnspr4 \
+    libdbus-1-3 \ 
+    libatk1.0-0 \
+    libatk-bridge2.0-0 \
+    libcups2 \
+    libdrm2 \
+    libexpat1 \
+    libxcb1 \
+    libxkbcommon0 \
+    libxrandr2 \
+    libgbm1 \
+    libasound2 \
+    libxshmfence1 \
+    libgles2 \
+    fonts-liberation \
+    fonts-noto-color-emoji \
     xvfb                # NO backslash - this is the last package
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
