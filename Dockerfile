@@ -3,7 +3,7 @@
 # 1. Assume Railway provides an Alpine-based N8n image
 #    We still include a FROM line as it's required Dockerfile syntax,
 #    but accept the build environment might override it.
-FROM n8nio/n8n:latest # Or n8nio/n8n:1.28.0 - doesn't seem to change the base OS
+FROM n8nio/n8n:latest # Or n8nio/n8n:1.28.0 
 
 # 2. Switch to root user
 USER root
