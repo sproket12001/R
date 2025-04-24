@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 \
     python3-pip \
     python3-venv \      # venv package for Debian
-    build-essential \   # Standard build tools
+    build-essential \   
     # --- Playwright System Dependencies for Debian ---
     libnss3 \
     libnspr4 \
