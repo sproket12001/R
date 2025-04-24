@@ -9,18 +9,33 @@ USER root
 # Update package lists and install Python, pip
 RUN apk update && apk add --no-cache \
     python3 \
-    py3-pip
+    py3-pip \           # <--- Installs pip for python3
+    py3-venv \          # <--- Installs venv for python3
+    build-base \        # <--- Alpine equivalent of build-essential (provides gcc, make etc)
+    python3-dev         # <--- Provides Python header files for compiling
 
-# Copy your requirements file into the image
+# --- Create and activate virtual environment ---
+# Create a directory for the venv owned by the node user
+RUN mkdir /opt/venv && chown node:node /opt/venv
+
+# Switch to node user TEMPORARILY to create venv correctly
+USER node 
+RUN python3 -m venv /opt/venv
+
+# Copy requirements file (owned by root, but that's okay for copying)
+USER root 
 COPY requirements.txt /tmp/requirements.txt
 
-# Install Python dependencies using pip
-RUN pip3 install --no-cache-dir -r /tmp/requirements.txt
+# --- Install packages into the virtual environment ---
+# Use the pip from the venv to install packages
+# We run this as root because apk ran as root, but install into the venv
+RUN /opt/venv/bin/pip install --no-cache-dir -r /tmp/requirements.txt
 
-# Clean up the requirements file (optional)
+# Clean up requirements file
 RUN rm /tmp/requirements.txt
 
-# IMPORTANT: Switch back to the non-root n8n user
+# IMPORTANT: Switch back to the standard N8n user for running n8n
 USER node
 
-# The base image's CMD or ENTRYPOINT will run n8n automatically
+# How N8n will run Python now:
+# In Execute Command node, use: /opt/venv/bin/python3 your_script.py
