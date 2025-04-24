@@ -1,7 +1,7 @@
 # Dockerfile
 
 # Start from the official n8n base image (use a specific version for stability)
-FROM n8nio/n8n:1.41.1-debian
+FROM n8nio/n8n:1.41.1
 
 # Switch to root user to install packages
 USER root
