@@ -1,40 +1,47 @@
 # Dockerfile
 
-# Start from the official n8n base image (use a specific version for stability)
-FROM n8nio/n8n:latest
+# Start from the official N8n image (Alpine based)
+FROM n8nio/n8n:latest # Or specific version
 
-# Switch to root user to install packages
+# Switch to root user
 USER root
 
-# Update package lists and install Python, pip
+# Install Alpine packages: python3, pip, build tools, AND Playwright dependencies
 RUN apk update && apk add --no-cache \
     python3 \
     py3-pip \
     build-base \
-    python3-dev
+    python3-dev \
+    # --- Playwright System Dependencies for Alpine ---
+    udev \
+    ttf-freefont \
+    freetype \
+    harfbuzz \
+    libstdc++ \
+    cairo \
+    xvfb \
+    noto-fonts-emoji \
+    chromium # <--- Add browser if you want system version, OR let playwright install below
 
-# --- Create and activate virtual environment ---
-# Create a directory for the venv owned by the node user
+# --- Check Versions ---
+RUN python3 --version && pip3 --version
+
+# --- Create virtual environment ---
 RUN mkdir /opt/venv && chown node:node /opt/venv
-
-# Switch to node user TEMPORARILY to create venv correctly
 USER node 
 RUN python3 -m venv /opt/venv
-
-# Copy requirements file (owned by root, but that's okay for copying)
 USER root 
 COPY requirements.txt /tmp/requirements.txt
 
 # --- Install packages into the virtual environment ---
-# Use the pip from the venv to install packages
-# We run this as root because apk ran as root, but install into the venv
-RUN /opt/venv/bin/pip install --no-cache-dir -r /tmp/requirements.txt
+RUN /opt/venv/bin/pip install --no-cache-dir -r /tmp/requirements.txt # <-- This is the line that failed
 
-# Clean up requirements file
+# --- Install Playwright Browsers (AFTER pip install) ---
+# Use --with-deps to try and auto-install any missing OS dependencies
+RUN /opt/venv/bin/playwright install --with-deps 
+
+# --- Clean up ---
 RUN rm /tmp/requirements.txt
 
-# IMPORTANT: Switch back to the standard N8n user for running n8n
+# Switch back to standard N8n user
 USER node
-
-# How N8n will run Python now:
-# In Execute Command node, use: /opt/venv/bin/python3 your_script.py
