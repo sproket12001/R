@@ -29,9 +29,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libgles2 \
     fonts-liberation \
     fonts-noto-color-emoji \
-    xvfb                # NO backslash - this is the last package
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    xvfb
+&& apt-get clean \
+&& rm -rf /var/lib/apt/lists/*
 
 # --- Check Versions (Optional but helpful) ---
 RUN python3 --version && pip3 --version
