@@ -1,7 +1,7 @@
 # Dockerfile
 
 # Start from the official N8n image (Alpine based)
-FROM n8nio/n8n:latest # Or specific version
+FROM n8nio/n8n:latest 
 
 # Switch to root user
 USER root
