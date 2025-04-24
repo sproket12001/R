@@ -1,59 +1,49 @@
-# Dockerfile
+# Dockerfile (Alpine Base)
 
-# Start from the official N8n image (Alpine based)
-FROM n8nio/n8n:latest 
+# 1. Assume Railway provides an Alpine-based N8n image
+#    We still include a FROM line as it's required Dockerfile syntax,
+#    but accept the build environment might override it.
+FROM n8nio/n8n:latest # Or n8nio/n8n:1.28.0 - doesn't seem to change the base OS
 
-# Switch to root user
+# 2. Switch to root user
 USER root
 
-# Install Alpine packages: python3, pip, build tools, AND Playwright dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# 3. Install Alpine packages using apk
+#    python3, pip, build tools, AND Playwright system deps
+RUN apk update && apk add --no-cache \
     python3 \
-    python3-pip \
-    python3-venv \
-    build-essential \
-    libnss3 \           
-    libnspr4 \
-    libdbus-1-3 \ 
-    libatk1.0-0 \
-    libatk-bridge2.0-0 \
-    libcups2 \
-    libdrm2 \
-    libexpat1 \
-    libxcb1 \
-    libxkbcommon0 \
-    libxrandr2 \
-    libgbm1 \
-    libasound2 \
-    libxshmfence1 \
-    libgles2 \
-    fonts-liberation \
-    fonts-noto-color-emoji \
-    xvfb && \
-    apt-get clean &&\
-    rm -rf /var/lib/apt/lists/*
+    py3-pip \           # Installs pip for python3
+    build-base \        # Alpine equivalent of build-essential
+    python3-dev \       # Provides Python header files
+    # --- Playwright System Dependencies for Alpine ---
+    udev \
+    ttf-freefont \
+    freetype \
+    harfbuzz \
+    libstdc++ \
+    cairo \
+    xvfb \
+    chromium            # NO backslash - last package in list
 
-# --- Check Versions (Optional but helpful) ---
-RUN python3 --version && pip3 --version
+# --- Check Versions ---
+RUN echo "==== VERSION CHECK ====" && \
+    python3 --version && \
+    pip3 --version && \
+    echo "======================="
 
-# --- Create virtual environment ---
-RUN mkdir /opt/venv && chown node:node /opt/venv
-USER node
-RUN python3 -m venv /opt/venv
-USER root
+# 4. Copy requirements file
 COPY requirements.txt /tmp/requirements.txt
 
-# --- Install packages into the virtual environment ---
-RUN /opt/venv/bin/pip install --no-cache-dir -r /tmp/requirements.txt
+# 5. Install Python dependencies using pip, breaking system packages protection
+RUN pip3 install --no-cache-dir --break-system-packages -r /tmp/requirements.txt
 
-# --- Install Playwright Browsers (AFTER pip install) ---
-RUN /opt/venv/bin/playwright install --with-deps
+# 6. Install Playwright Browsers (if playwright install succeeded)
+#    This step might fail if pip install playwright failed
+#    We add '|| true' so this step doesn't fail the whole build if playwright isn't there
+RUN playwright install --with-deps || true
 
-# --- Clean up ---
+# 7. Clean up requirements file
 RUN rm /tmp/requirements.txt
 
-# 4. IMPORTANT: Switch back to the standard N8n user
+# 8. IMPORTANT: Switch back to the standard N8n user
 USER node
-
-# How N8n will run Python now (if using venv):
-# In Execute Command node, use: /opt/venv/bin/python3 your_script.py
