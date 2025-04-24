@@ -1,5 +1,5 @@
 # Dockerfile
-
+ARG CACHE_BUSTER=random_value_98765
 # Start from the official n8n base image (use a specific version for stability)
 FROM n8nio/n8n:1.41.1
 
