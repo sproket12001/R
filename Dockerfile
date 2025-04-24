@@ -10,7 +10,6 @@ USER root
 RUN apk update && apk add --no-cache \
     python3 \
     py3-pip \
-    py3-venv \
     build-base \
     python3-dev
 
