@@ -1,11 +1,22 @@
 FROM n8nio/n8n:latest
 
 USER root
+RUN cp /etc/apk/repositories /etc/apk/repositories.orig
+
+RUN echo "http://dl-cdn.alpinelinux.org/alpine/v3.16/main" > /etc/apk/repositories && \
+    echo "http://dl-cdn.alpinelinux.org/alpine/v3.16/community" >> /etc/apk/repositories
+
 RUN apk update && apk add --no-cache \
     python3 \
     py3-pip \
     build-base \
     python3-dev \
+    ca-certificates
+
+RUN cp /etc/apk/repositories.orig /etc/apk/repositories && \
+    rm /etc/apk/repositories.orig
+
+RUN apk update && apk add --no-cache \
     udev \
     ttf-freefont \
     freetype \
@@ -13,13 +24,15 @@ RUN apk update && apk add --no-cache \
     libstdc++ \
     cairo \
     xvfb \
-    chromium            # NO backslash - last package in list
+    chromium
 
-# --- Check Versions ---
-RUN echo "==== VERSION CHECK ====" && \
+RUN python3 -m pip install --upgrade pip
+
+RUN echo "==== VERSION CHECK (EXPECTING PYTHON 3.10) ====" && \
     python3 --version && \
     pip3 --version && \
-    echo "======================="
+    echo "================================================"
+
 
 # 4. Copy requirements file
 COPY requirements.txt /tmp/requirements.txt
