@@ -30,8 +30,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     fonts-liberation \
     fonts-noto-color-emoji \
     xvfb
-&& apt-get clean \
-&& rm -rf /var/lib/apt/lists/*
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # --- Check Versions (Optional but helpful) ---
 RUN python3 --version && pip3 --version
