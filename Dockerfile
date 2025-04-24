@@ -1,21 +1,11 @@
-# Dockerfile (Alpine Base)
+FROM n8nio/n8n:latest
 
-# 1. Assume Railway provides an Alpine-based N8n image
-#    We still include a FROM line as it's required Dockerfile syntax,
-#    but accept the build environment might override it.
-FROM n8nio/n8n:latest # Or n8nio/n8n:1.28.0 
-
-# 2. Switch to root user
 USER root
-
-# 3. Install Alpine packages using apk
-#    python3, pip, build tools, AND Playwright system deps
 RUN apk update && apk add --no-cache \
     python3 \
-    py3-pip \           # Installs pip for python3
-    build-base \        # Alpine equivalent of build-essential
-    python3-dev \       # Provides Python header files
-    # --- Playwright System Dependencies for Alpine ---
+    py3-pip \
+    build-base \
+    python3-dev \
     udev \
     ttf-freefont \
     freetype \
