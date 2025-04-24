@@ -1,51 +1,29 @@
-FROM n8nio/n8n:latest
+# Dockerfile
 
+# Start from the official n8n base image (use a specific version for stability)
+FROM n8nio/n8n:1.41.1-debian
+
+# Switch to root user to install packages
 USER root
-RUN cp /etc/apk/repositories /etc/apk/repositories.orig
 
-RUN echo "http://dl-cdn.alpinelinux.org/alpine/v3.16/main" > /etc/apk/repositories && \
-    echo "http://dl-cdn.alpinelinux.org/alpine/v3.16/community" >> /etc/apk/repositories
-
-RUN apk update && apk add --no-cache \
+# Update package lists and install Python, pip
+RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 \
-    py3-pip \
-    ca-certificates
+    python3-pip \
+    # Add build-essential python3-dev if needed for complex libraries
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN cp /etc/apk/repositories.orig /etc/apk/repositories && \
-    rm /etc/apk/repositories.orig
-
-RUN apk update && apk add --no-cache \
-    build-base \
-    udev \
-    ttf-freefont \
-    freetype \
-    harfbuzz \
-    libstdc++ \
-    cairo \
-    xvfb \
-    chromium
-
-RUN python3 -m pip install --upgrade pip
-
-RUN echo "==== VERSION CHECK (EXPECTING PYTHON 3.10) ====" && \
-    python3 --version && \
-    pip3 --version && \
-    echo "================================================"
-
-
-# 4. Copy requirements file
+# Copy your requirements file into the image
 COPY requirements.txt /tmp/requirements.txt
 
-# 5. Install Python dependencies using pip, breaking system packages protection
-RUN pip3 install --no-cache-dir --break-system-packages -r /tmp/requirements.txt
+# Install Python dependencies using pip
+RUN pip3 install --no-cache-dir -r /tmp/requirements.txt
 
-# 6. Install Playwright Browsers (if playwright install succeeded)
-#    This step might fail if pip install playwright failed
-#    We add '|| true' so this step doesn't fail the whole build if playwright isn't there
-RUN playwright install --with-deps || true
-
-# 7. Clean up requirements file
+# Clean up the requirements file (optional)
 RUN rm /tmp/requirements.txt
 
-# 8. IMPORTANT: Switch back to the standard N8n user
+# IMPORTANT: Switch back to the non-root n8n user
 USER node
+
+# The base image's CMD or ENTRYPOINT will run n8n automatically
