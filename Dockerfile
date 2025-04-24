@@ -7,12 +7,9 @@ FROM n8nio/n8n:latest
 USER root
 
 # Update package lists and install Python, pip
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apk update && apk add --no-cache \
     python3 \
-    python3-pip \
-    # Add build-essential python3-dev if needed for complex libraries
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    py3-pip
 
 # Copy your requirements file into the image
 COPY requirements.txt /tmp/requirements.txt
